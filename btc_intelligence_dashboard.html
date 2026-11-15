@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTC Intelligence — Personal Dashboard</title>
+<style>
+:root{--bg:#080d16;--panel:#111a29;--panel2:#172235;--line:#26344a;--muted:#91a0b6;--text:#edf3fb;--orange:#f7931a;--green:#32c48d;--red:#f06b73;--yellow:#f5bd4f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0%,#17243a 0,transparent 32%),var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;gap:12px;align-items:center;font-weight:800;font-size:19px;letter-spacing:.4px}.coin{background:#2a2116;color:var(--orange);width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:26px}
+.small{color:var(--muted);font-size:12px}.pill{border:1px solid #245c4a;color:#6de0b2;background:#10271f;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700}
+h1{font-size:25px;margin:0 0 5px}h2{font-size:16px;margin:0 0 14px}.sub{color:var(--muted);margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:16px 0}.card{background:linear-gradient(145deg,var(--panel),#0e1725);border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}
+.kicker{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.value{font-size:27px;font-weight:800;letter-spacing:-.7px;margin:7px 0}.delta{font-size:12px;color:var(--muted)}
+.section{margin-top:23px}.two{display:grid;grid-template-columns:1.25fr .75fr;gap:13px}.status{display:inline-block;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:700;background:#292333;color:#c8b4ff}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:11px 7px;border-bottom:1px solid var(--line);font-size:12px}th{color:var(--muted);font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.check{padding:11px 0;border-bottom:1px solid var(--line)}.check:last-child{border:0}
+.tag{font-size:11px;padding:4px 8px;border-radius:8px;background:#273247;color:#aebbd0}.warn{color:var(--yellow)}.good{color:var(--green)}.bad{color:var(--red)}
+button,input{font:inherit;border-radius:9px;border:1px solid var(--line);background:#0b1320;color:var(--text);padding:10px}
+button{cursor:pointer;background:#f7931a;color:#17110a;border:0;font-weight:800}button.secondary{background:#202d42;color:var(--text);border:1px solid var(--line)}
+input{width:min(100%,360px)}.actions{display:flex;gap:8px;flex-wrap:wrap}.foot{margin:22px 0;color:var(--muted);font-size:11px}.chart{height:180px;width:100%;display:block}.empty{color:var(--muted);font-size:12px;padding:14px 0}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media(max-width:480px){.wrap{padding:14px}.value{font-size:23px}.grid{gap:9px}.card{padding:13px}}
+</style></head>
+<body><div class="wrap">
+<header class="top"><div class="brand"><div class="coin">₿</div><div>BTC INTELLIGENCE<div class="small">PERSONAL CYCLE & LIQUIDITY MONITOR</div></div></div><div class="row"><span class="pill" id="connection">CONNECTING</span><span class="small" id="clock">—</span></div></header>
+<h1>Bitcoin Market Overview</h1><div class="sub">Pemantauan siklus, risiko bear market, capitulation, dan likuiditas global.</div>
+<div class="grid">
+ <div class="card"><div class="kicker">BTC Price · USD</div><div class="value" id="price">Memuat…</div><div class="delta" id="priceMeta">Sumber: mempool.space</div></div>
+ <div class="card"><div class="kicker">Market Cap</div><div class="value" id="mcap">—</div><div class="delta">CoinGecko · perlu API key Demo</div></div>
+ <div class="card"><div class="kicker">24h Change</div><div class="value" id="change">—</div><div class="delta" id="vol">Volume 24 jam: —</div></div>
+ <div class="card"><div class="kicker">Cycle Status</div><div class="value warn" id="cycle">Belum dinilai</div><div class="delta">Menunggu data indikator terverifikasi</div></div>
+</div>
+<div class="two section">
+ <div class="card"><div class="row"><h2>BTC Price History</h2><span class="tag">7 hari · CoinGecko</span></div><canvas class="chart" id="chart"></canvas><div class="empty" id="chartNote">Masukkan API key CoinGecko Demo untuk memuat grafik historis.</div></div>
+ <div class="card"><h2>Deep Capitulation Engine</h2><div class="small">Ambang dari kerangka analisis referensi. Skor resmi hanya dihitung jika definisi dan data cocok.</div>
+  <div class="check row"><span>Price vs holder cost</span><span class="tag">N/A</span></div>
+  <div class="check row"><span>Holder unrealized P/L</span><span class="tag">N/A</span></div>
+  <div class="check row"><span>Miner income / yearly avg.</span><span class="tag">N/A</span></div>
+  <div class="check row"><span>Coins in profit</span><span class="tag">N/A</span></div>
+  <div class="value" style="font-size:22px">— / 4</div><div class="small">Belum ada skor: metrik on-chain berlisensi/berbasis provider belum dikoneksikan.</div>
+ </div>
+</div>
+<div class="grid section">
+ <div class="card"><div class="kicker">Network Hashrate</div><div class="value" id="hash">Memuat…</div><div class="delta">mempool.space · estimasi jaringan</div></div>
+ <div class="card"><div class="kicker">Mining Difficulty</div><div class="value" id="difficulty">Memuat…</div><div class="delta">mempool.space</div></div>
+ <div class="card"><div class="kicker">Difficulty Adjustment</div><div class="value" id="adjust">Memuat…</div><div class="delta">Estimasi penyesuaian berikutnya</div></div>
+ <div class="card"><div class="kicker">Global Liquidity</div><div class="value">Belum terhubung</div><div class="delta">FRED API key diperlukan</div></div>
+</div>
+<div class="two section">
+ <div class="card"><h2>Data & Provider Status</h2><table><thead><tr><th>Provider / metrik</th><th>Status</th><th>Catatan</th></tr></thead><tbody>
+ <tr><td>mempool.space price</td><td class="good">Public API</td><td>Refresh manual</td></tr>
+ <tr><td>mempool.space mining</td><td class="good">Public API</td><td>Hashrate / difficulty</td></tr>
+ <tr><td>CoinGecko market</td><td id="cgstatus" class="warn">API key belum diisi</td><td>Market cap, volume, chart</td></tr>
+ <tr><td>FRED macro</td><td class="warn">Belum dikonfigurasi</td><td>API key diperlukan</td></tr>
+ <tr><td>On-chain valuation</td><td class="warn">Belum dikonfigurasi</td><td>MVRV, NUPL, SOPR, holder cost</td></tr>
+ <tr><td>Derivatives</td><td class="warn">Belum dikonfigurasi</td><td>OI, funding, liquidation</td></tr>
+ </tbody></table></div>
+ <div class="card"><h2>Pengaturan API (opsional)</h2><p class="small">API key disimpan hanya di browser perangkat ini selama tab terbuka. Jangan pernah kirim secret key lewat chat.</p>
+ <label class="small">CoinGecko Demo API key</label><br><input id="cgkey" type="password" placeholder="Tempel API key Demo"><div class="actions" style="margin-top:10px"><button id="save">Simpan & Hubungkan</button><button class="secondary" id="refresh">Refresh data</button></div>
+ <p class="small" style="margin-top:12px">Buat key gratis melalui <a style="color:#f7931a" href="https://www.coingecko.com/en/api" target="_blank" rel="noreferrer">CoinGecko API</a>. Jangan masukkan API key FRED atau provider berbayar di sini; integrasi server-side lebih aman.</p></div>
+</div>
+<div class="card section"><h2>Analyst Notes</h2><div class="empty">Dashboard ini belum memberi sinyal capitulation atau bottom. Setelah sumber on-chain dan makro terintegrasi, sistem akan menampilkan fakta, interpretasi, tingkat keyakinan, tanggal observasi, serta keterlambatan data.</div></div>
+<div class="foot">BTC Intelligence · Personal research tool · Data bukan nasihat keuangan. Harga dan metrik dapat terlambat, berubah, atau tidak tersedia. Selalu periksa sumber asli.</div>
+</div>
+<script>
+const $=id=>document.getElementById(id), fmt=(n,d=2)=>Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
+function time(){ $('clock').textContent=new Date().toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'medium',timeZone:'Asia/Jakarta'})+' WIB';}
+async function json(url,opts={}){const r=await fetch(url,opts);if(!r.ok)throw Error('HTTP '+r.status);return r.json()}
+async function base(){
+ try{
+  const p=await json('https://mempool.space/api/v1/prices');const usd=p.USD;
+  $('price').textContent='$'+fmt(usd,0);$('priceMeta').textContent='Terakhir diambil '+new Date().toLocaleTimeString('id-ID')+' · mempool.space';
+  $('connection').textContent='PUBLIC API CONNECTED';$('connection').style.color='#6de0b2';
+ }catch(e){$('price').textContent='Tidak tersedia';$('priceMeta').textContent='API error: '+e.message;$('connection').textContent='PARTIAL / OFFLINE'}
+ try{
+  const h=await json('https://mempool.space/api/v1/mining/hashrate/1w');
+  const last=h.hashrates?.[h.hashrates.length-1];if(last)$('hash').textContent=fmt(last.avgHashrate/1e18,2)+' EH/s';
+  if(h.currentDifficulty)$('difficulty').textContent=fmt(h.currentDifficulty/1e12,2)+' T';
+  const d=await json('https://mempool.space/api/v1/difficulty-adjustment');
+  $('adjust').textContent=(d.progressPercent!=null?fmt(d.progressPercent,1)+'%':'—');
+ }catch(e){$('hash').textContent='Tidak tersedia';$('difficulty').textContent='Tidak tersedia';$('adjust').textContent='Tidak tersedia'}
+}
+async function gecko(){
+ const key=$('cgkey').value.trim();if(!key)return;
+ try{
+  const headers={'x-cg-demo-api-key':key};
+  const m=await json('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin&price_change_percentage=24h', {headers});
+  const b=m[0];$('mcap').textContent='$'+fmt(b.market_cap/1e9,1)+'B';$('change').textContent=(b.price_change_percentage_24h>=0?'+':'')+fmt(b.price_change_percentage_24h,2)+'%';
+  $('change').className='value '+(b.price_change_percentage_24h>=0?'good':'bad');$('vol').textContent='Volume 24 jam: $'+fmt(b.total_volume/1e9,2)+'B';$('cgstatus').textContent='Connected';$('cgstatus').className='good';
+  const ch=await json('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7',{headers});
+  draw(ch.prices);$('chartNote').textContent='Data historis CoinGecko · 7 hari';
+ }catch(e){$('cgstatus').textContent='Gagal: '+e.message;$('cgstatus').className='bad'}
+}
+function draw(points){const c=$('chart'),ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);if(!points?.length)return;const vals=points.map(x=>x[1]),min=Math.min(...vals),max=Math.max(...vals),pad=8;ctx.strokeStyle='#f7931a';ctx.lineWidth=2;ctx.beginPath();points.forEach((p,i)=>{const x=pad+i/(points.length-1)*(w-2*pad),y=h-pad-(p[1]-min)/(max-min||1)*(h-2*pad);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#91a0b6';ctx.font='10px system-ui';ctx.fillText('$'+fmt(max,0),8,12);ctx.fillText('$'+fmt(min,0),8,h-3)}
+$('save').onclick=()=>{if(!$('cgkey').value.trim())return alert('Masukkan API key CoinGecko Demo.');gecko()};
+$('refresh').onclick=()=>{base();gecko();time()};
+time();base();setInterval(time,1000);setInterval(base,60000);
+</script></body></html>
